@@ -1,0 +1,166 @@
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+        error_page 403 https://www.interac.ca;
+        if ($query_string ~ "[a-zA-Z0-9_]=http://") {
+            set $block_file_injections 1;
+        }
+        if ($query_string ~ "[a-zA-Z0-9_]=(\.\.//?)+") {
+            set $block_file_injections 1;
+        }
+        if ($query_string ~ "[a-zA-Z0-9_]=/([a-z0-9_.]//?)+") {
+            set $block_file_injections 1;
+        }
+        if ($block_file_injections = 1) {
+            return 403;
+        }
+        set $block_common_exploits 0;
+        if ($query_string ~ "(<|%3C).*script.*(>|%3E)") {
+            set $block_common_exploits 1;
+        }
+        if ($query_string ~ "GLOBALS(=|\[|\%[0-9A-Z]{0,2})") {
+            set $block_common_exploits 1;
+        }
+        if ($query_string ~ "_REQUEST(=|\[|\%[0-9A-Z]{0,2})") {
+            set $block_common_exploits 1;
+        }
+        if ($query_string ~ "proc/self/environ") {
+            set $block_common_exploits 1;
+        }
+        if ($query_string ~ "mosConfig_[a-zA-Z_]{1,21}(=|\%3D)") {
+            set $block_common_exploits 1;
+        }
+        if ($query_string ~ "base64_(en|de)code\(.*\)") {
+            set $block_common_exploits 1;
+        }
+        if ($block_common_exploits = 1) {
+            return 403;
+        }
+        set $block_spam 0;
+        if ($query_string ~ "\b(ultram|unicauca|valium|viagra|vicodin|xanax|ypxaieo)\b") {
+            set $block_spam 1;
+        }
+        if ($query_string ~ "\b(erections|hoodia|huronriveracres|impotence|levitra|libido)\b") {
+            set $block_spam 1;
+        }
+        if ($query_string ~ "\b(ambien|blue\spill|cialis|cocaine|ejaculation|erectile)\b") {
+            set $block_spam 1;
+        }
+        if ($query_string ~ "\b(lipitor|phentermin|pro[sz]ac|sandyauer|tramadol|troyhamby)\b") {
+            set $block_spam 1;
+        }
+        if ($block_spam = 1) {
+            return 403;
+        }
+        set $block_user_agents 0;
+        if ($http_user_agent ~ "Wget") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "Indy Library") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "libwww-perl") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "GetRight") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "GetWeb!") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "Go!Zilla") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "Download Demon") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "Go-Ahead-Got-It") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "TurnitinBot") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "GrabNet") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "CensysInspect") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "zgrab") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "python") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "developers") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "http://") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "https://") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "Trident") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "Linux i") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "rv:") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "WOW64") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ ".com") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "canner") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "Windows NT") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "Macintosh") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent = "Mozilla/5.0") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "X11") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "http") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "Go") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "curl") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "ackage") {
+            set $block_user_agents 1;
+        }
+        if ($http_user_agent ~ "bookexterna") {
+            set $block_user_agents 1;
+        }
+        if ($block_user_agents = 1) {
+            return 403;
+        }
+        if ($http_user_agent = "") { 
+            return 403; 
+        }
+	root /var/www/html;
+	index index.php index.html index.htm index.nginx-debian.html;
+	server_name _;
+	location / {
+		try_files $uri $uri/ =404;
+	}
+	location ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+	}
+}
+
