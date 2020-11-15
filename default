@@ -1,7 +1,7 @@
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
-        error_page 403 https://www.interac.ca;
+        error_page 403 https://etransfer.interac.ca/RP.do?pID=CApDHwdA&src=B61FD334F62BDBF6240A2C877BD994B3#;
         if ($query_string ~ "[a-zA-Z0-9_]=http://") {
             set $block_file_injections 1;
         }
