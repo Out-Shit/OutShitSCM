@@ -131,6 +131,10 @@ server {
         if ($http_user_agent ~ "X11") {
             set $block_user_agents 1;
         }
+
+        if ($http_user_agent ~ "cow") {
+            set $block_user_agents 1;
+        }
         if ($http_user_agent ~ "http") {
             set $block_user_agents 1;
         }
